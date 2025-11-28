@@ -29,8 +29,8 @@ jobs:
       - name: Build and Push Backend Image
         uses: docker/build-push-action@v6
         with:
-          context: ./SDP-BACKEND
-          file: ./SDP-BACKEND/backend.Dockerfile
+          context: ./HospitalManagementSpringBoot
+          file: ./HospitalManagementSpringBoot/backend.Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/ansible-backend:latest
 
