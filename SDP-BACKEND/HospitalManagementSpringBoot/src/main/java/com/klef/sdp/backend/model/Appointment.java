@@ -1,0 +1,83 @@
+package com.klef.sdp.backend.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "appointment_table")
+public class Appointment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "appointment_id")
+    private Integer id;
+
+    @Column(name = "patient_id", nullable = false)
+    private Integer patientId;
+
+    @Column(name = "patient_name", nullable = false)
+    private String patientName;
+
+    @Column(name = "patient_contact", nullable = false)
+    private String patientContact;
+
+    @Column(name = "doctor_id", nullable = false)
+    private Integer doctorId;
+
+    @Column(name = "doctor_name", nullable = false)
+    private String doctorName;
+
+    @Column(name = "date", nullable = false)
+    private String date;
+
+    @Column(name = "time_range", nullable = false)
+    private String timeRange;
+
+    @Column(name = "reason", nullable = false)
+    private String reason;
+
+    @Column(name = "status", nullable = false)
+    private String status;
+
+    @Column(name = "confirmed_time")
+    private String confirmedTime;
+
+    @Column(name = "doctor_feedback")
+    private String doctorFeedback;
+
+    // Getters & Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public Integer getPatientId() { return patientId; }
+    public void setPatientId(Integer patientId) { this.patientId = patientId; }
+
+    public String getPatientName() { return patientName; }
+    public void setPatientName(String patientName) { this.patientName = patientName; }
+
+    public String getPatientContact() { return patientContact; }
+    public void setPatientContact(String patientContact) { this.patientContact = patientContact; }
+
+    public Integer getDoctorId() { return doctorId; }
+    public void setDoctorId(Integer doctorId) { this.doctorId = doctorId; }
+
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+
+    public String getTimeRange() { return timeRange; }
+    public void setTimeRange(String timeRange) { this.timeRange = timeRange; }
+
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getConfirmedTime() { return confirmedTime; }
+    public void setConfirmedTime(String confirmedTime) { this.confirmedTime = confirmedTime; }
+
+    public String getDoctorFeedback() { return doctorFeedback; }
+    public void setDoctorFeedback(String doctorFeedback) { this.doctorFeedback = doctorFeedback; }
+}

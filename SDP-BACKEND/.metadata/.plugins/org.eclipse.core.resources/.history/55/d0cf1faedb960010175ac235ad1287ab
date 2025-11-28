@@ -1,0 +1,50 @@
+package com.klef.sdp.backend.controller;
+
+import com.klef.sdp.backend.dto.AppointmentDTO;
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.service.AppointmentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/appointments")
+@CrossOrigin("*")
+public class AppointmentController {
+
+    @Autowired
+    private AppointmentService appointmentService;
+
+    // 🔹 Book appointment using DTO
+    @PostMapping("/book")
+    public ResponseEntity<?> bookAppointment(@RequestBody AppointmentDTO dto) {
+        try {
+            Appointment saved = appointmentService.bookAppointment(dto);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Appointment booked successfully",
+                    "appointment", saved
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "message", "Failed to book appointment: " + e.getMessage()
+            ));
+        }
+    }
+
+    // 🔹 Doctor's appointments
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<?> getAppointmentsByDoctor(@PathVariable int doctorId) {
+        List<Appointment> list = appointmentService.getAppointmentsByDoctor(doctorId);
+        return ResponseEntity.ok(list);
+    }
+
+    // 🔹 Patient's appointments
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<?> getAppointmentsByPatient(@PathVariable int patientId) {
+        List<Appointment> list = appointmentService.getAppointmentsByPatient(patientId);
+        return ResponseEntity.ok(list);
+    }
+}

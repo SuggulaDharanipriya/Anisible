@@ -1,0 +1,43 @@
+package com.klef.sdp.backend.model;
+
+import jakarta.persistence.*;
+@Entity
+@Table(name = "appointment_table")
+public class Appointment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "appointment_id")
+    private Integer id;
+
+    @Column(name = "patient_id")
+    private Integer patientId;
+
+    @Column(name = "patient_name")
+    private String patientName;
+
+    @Column(name = "patient_contact")
+    private String patientContact;
+
+    @Column(name = "doctor_id")
+    private Integer doctorId;
+
+    @Column(name = "doctor_name")
+    private String doctorName;
+
+    private String date;
+
+    @Column(name = "time_range")
+    private String timeRange;
+
+    private String reason;
+    private String status;
+
+    @Column(name = "confirmed_time")
+    private String confirmedTime;
+
+    @Column(name = "doctor_feedback")
+    private String doctorFeedback;
+
+    // getters and setters
+}

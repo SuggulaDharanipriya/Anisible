@@ -1,0 +1,10 @@
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Appointment;
+import java.util.List;
+
+public interface AppointmentService {
+    String bookAppointment(Appointment appointment);
+    List<Appointment> getAppointmentsByDoctor(int doctorId);
+    List<Appointment> getAppointmentsByPatient(int patientId);
+}

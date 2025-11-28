@@ -1,0 +1,48 @@
+package com.klef.sdp.backend.controller;
+
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.service.AppointmentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/appointments")
+@CrossOrigin("*")
+public class AppointmentController {
+
+    @Autowired
+    private AppointmentService appointmentService;
+
+    @PostMapping("/book")
+    public ResponseEntity<String> bookAppointment(@RequestBody Appointment appointment) {
+        try {
+            String result = appointmentService.bookAppointment(appointment);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to book appointment");
+        }
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<?> getAppointmentsByDoctor(@PathVariable int doctorId) {
+        try {
+            List<Appointment> list = appointmentService.getAppointmentsByDoctor(doctorId);
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to fetch doctor appointments");
+        }
+    }
+
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<?> getAppointmentsByPatient(@PathVariable int patientId) {
+        try {
+            List<Appointment> list = appointmentService.getAppointmentsByPatient(patientId);
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to fetch patient appointments");
+        }
+    }
+}

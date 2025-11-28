@@ -1,0 +1,41 @@
+package com.klef.sdp.backend.controller;
+
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.service.AppointmentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/appointments")
+@CrossOrigin(origins = "*")
+public class AppointmentController {
+
+    @Autowired
+    private AppointmentService appointmentService;
+
+    @PostMapping("/book")
+    public Appointment book(@RequestBody Appointment appointment) {
+        return appointmentService.bookAppointment(appointment);
+    }
+
+    @GetMapping("/doctor/{id}")
+    public List<Appointment> getByDoctor(@PathVariable int id) {
+        return appointmentService.getAppointmentsByDoctor(id);
+    }
+
+    @GetMapping("/patient/{id}")
+    public List<Appointment> getByPatient(@PathVariable int id) {
+        return appointmentService.getAppointmentsByPatient(id);
+    }
+
+    @PutMapping("/{id}/status")
+    public Appointment updateStatus(
+            @PathVariable int id,
+            @RequestParam String status,
+            @RequestParam(required = false) String feedback
+    ) {
+        return appointmentService.updateAppointmentStatus(id, status, feedback);
+    }
+}

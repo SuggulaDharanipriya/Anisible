@@ -1,0 +1,5 @@
+.patient-history { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+.patient-history .filters { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.patient-history .list { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; }
+.patient-history .row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #e5e7eb; }
+

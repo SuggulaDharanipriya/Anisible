@@ -1,0 +1,77 @@
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Admin;
+import com.klef.sdp.backend.model.Doctor;
+import com.klef.sdp.backend.model.Patient;
+import com.klef.sdp.backend.repository.AdminRepository;
+import com.klef.sdp.backend.repository.DoctorRepository;
+import com.klef.sdp.backend.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class AdminServiceImpl implements AdminService
+{
+    @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Override
+    public Admin checkAdminLogin(String username, String password) {
+        return adminRepository.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public String addDoctor(Doctor doctor) {
+        doctorRepository.save(doctor);
+        return "Doctor Added Successfully";
+    }
+
+    @Override
+    public List<Doctor> displayDoctors() {
+        return doctorRepository.findAll();
+    }
+
+    @Override
+    public String deleteDoctor(int id) {
+        Optional<Doctor> doc = doctorRepository.findById(id);
+        if (doc.isPresent()) {
+            doctorRepository.deleteById(id);
+            return "Doctor Deleted Successfully";
+        }
+        return "Doctor ID Not Found";
+    }
+
+    @Override
+    public long displayDoctorCount() {
+        return doctorRepository.count();
+    }
+
+    @Override
+    public List<Patient> displayPatients() {
+        return patientRepository.findAll();
+    }
+
+    @Override
+    public String deletePatient(int id) {
+        Optional<Patient> patient = patientRepository.findById(id);
+        if (patient.isPresent()) {
+            patientRepository.deleteById(id);
+            return "Patient Deleted Successfully";
+        }
+        return "Patient ID Not Found";
+    }
+
+    @Override
+    public long displayPatientCount() {
+        return patientRepository.count();
+    }
+}

@@ -1,0 +1,861 @@
+Hey doctor login patient login admin login adddoctor patientregistration ... count of patients and doctors all are working ....
+The problem is with Appoinement booking ... I need like patient book for a particular doctor appointment based on his name ,specilazation.... For particular time ...I think the best approch is patient needs to select aa time range btw 3 hrs ...Like 9am to 12 pm and 12 pm to 3 pm and 3pm to 6pm and 6pm to 9pm....on particular date ...In which it goes to doctor view appoinments .. In which the doctor get appointment he will select a time for particular time in that 3hrs ... Like for every 15 mins.. for example if patient selects 9 am to 12 am then he will give particular time like 10.30 am ... And he approves ... there is another option like deny..Deny means rejected and the status will get to patient in MY APPOINTMENTS... 
+i will provide codes of backend and frontend Please do modify and give full codes where you changed...change the codes only if required..
+
+Patient:
+package com.klef.sdp.backend.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "patient_table")
+public class Patient 
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "patient_id")
+    private int id;
+
+    @Column(name = "patient_name", length = 50, nullable = false)
+    private String name;
+
+    @Column(name = "patient_gender", length = 10, nullable = false)
+    private String gender;
+
+    @Column(name = "patient_dob", length = 20, nullable = false)
+    private String dob;
+
+    @Column(name = "patient_email", length = 50, nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "patient_uname", length = 50, nullable = false, unique = true)
+    private String username;
+
+    @Column(name = "patient_pwd", length = 50, nullable = false)
+    private String password;
+
+    @Column(name = "patient_mobileno", length = 20, nullable = false, unique = true)
+    private String mobileno;
+
+    @Column(name = "patient_location", length = 50, nullable = false)
+    private String location;
+
+    // 🔹 Getters & Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getDob() { return dob; }
+    public void setDob(String dob) { this.dob = dob; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getMobileno() { return mobileno; }
+    public void setMobileno(String mobileno) { this.mobileno = mobileno; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+}
+package com.klef.sdp.backend.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.klef.sdp.backend.model.Patient;
+import com.klef.sdp.backend.service.PatientService;
+
+@RestController
+@RequestMapping("/patient")
+@CrossOrigin("*")
+public class PatientController 
+{
+    @Autowired
+    private PatientService patientService;
+
+    @GetMapping("/")
+    public String home() {
+        return "Patient Module Running Successfully";
+    }
+
+    @PostMapping("/registration")
+    public ResponseEntity<String> patientRegistration(@RequestBody Patient patient) {
+        try {
+            String output = patientService.patientRegistration(patient);
+            return ResponseEntity.ok(output);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Patient Registration failed");
+        }
+    }
+
+    @PostMapping("/checklogin")
+    public ResponseEntity<?> checkPatientLogin(@RequestBody Patient patient) {
+        try {
+            Patient p = patientService.checkPatientLogin(patient.getUsername(), patient.getPassword());
+            if (p != null) {
+                return ResponseEntity.ok(p);
+            } else {
+                return ResponseEntity.status(401).body("Invalid Username or Password");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Login failed: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/updateprofile")
+    public ResponseEntity<String> updateProfile(@RequestBody Patient patient) {
+        try {
+            String output = patientService.patientUpdateProfile(patient);
+            return ResponseEntity.ok(output);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to Update Patient ... !!");
+        }
+    }
+}
+package com.klef.sdp.backend.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import com.klef.sdp.backend.model.Patient;
+
+@Repository
+public interface PatientRepository extends JpaRepository<Patient, Integer> 
+{
+    Patient findByUsernameAndPassword(String username, String password);
+
+    @Query("select count(p) from Patient p")
+    long patientCount();
+}
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Patient;
+
+public interface PatientService 
+{
+    public String patientRegistration(Patient patient);
+    public Patient checkPatientLogin(String username, String password);
+    public String patientUpdateProfile(Patient patient);
+}
+package com.klef.sdp.backend.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.klef.sdp.backend.model.Patient;
+import com.klef.sdp.backend.repository.PatientRepository;
+
+@Service
+public class PatientServiceImpl implements PatientService
+{
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Override
+    public String patientRegistration(Patient patient) {
+        patientRepository.save(patient);
+        return "Patient Registered Successfully";
+    }
+
+    @Override
+    public Patient checkPatientLogin(String username, String password) {
+        return patientRepository.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public String patientUpdateProfile(Patient patient) {
+        Patient existing = patientRepository.findById(patient.getId()).orElse(null);
+
+        if (existing != null) {
+            existing.setName(patient.getName());
+            existing.setDob(patient.getDob());
+            existing.setEmail(patient.getEmail());
+            existing.setMobileno(patient.getMobileno());
+            existing.setPassword(patient.getPassword());
+            existing.setLocation(patient.getLocation());
+            patientRepository.save(existing);
+            return "Patient Profile Updated Successfully";
+        } else {
+            return "Patient ID Not Found to Update";
+        }
+    }
+}
+_________________
+Doctor:
+package com.klef.sdp.backend.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.klef.sdp.backend.model.Doctor;
+import com.klef.sdp.backend.service.DoctorService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/doctor")
+@CrossOrigin("*")
+public class DoctorController 
+{
+    @Autowired
+    private DoctorService doctorService;
+
+    @PostMapping("/registration")
+    public ResponseEntity<String> doctorRegistration(@RequestBody Doctor doctor) {
+        try {
+            String result = doctorService.doctorRegistration(doctor);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Doctor Registration Failed");
+        }
+    }
+
+    @PostMapping("/checkdoctorlogin")
+    public ResponseEntity<?> checkDoctorLogin(@RequestBody Doctor doctor) {
+        try {
+            Doctor d = doctorService.checkDoctorLogin(doctor.getUsername(), doctor.getPassword());
+            if (d != null) {
+                return ResponseEntity.ok(d);
+            } else {
+                return ResponseEntity.status(401).body("Invalid Username or Password");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Login Failed");
+        }
+    }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<?> getDoctorProfile(@PathVariable int id) {
+        Doctor d = doctorService.getDoctorById(id);
+        if (d != null) {
+            return ResponseEntity.ok(d);
+        } else {
+            return ResponseEntity.status(404).body("Doctor Not Found");
+        }
+    }
+
+    @PutMapping("/updateprofile")
+    public ResponseEntity<String> updateDoctorProfile(@RequestBody Doctor doctor) {
+        try {
+            String result = doctorService.updateDoctorProfile(doctor);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to Update Doctor Profile");
+        }
+    }
+
+    // ✅ Fetch all doctors
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllDoctors() {
+        try {
+            List<Doctor> doctors = doctorService.getAllDoctors();
+            return ResponseEntity.ok(doctors);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to fetch doctors");
+        }
+    }
+}
+package com.klef.sdp.backend.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="doctor_table")
+public class Doctor
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="doctor_id")
+    private int id;
+
+    @Column(length = 50, nullable = false)
+    private String name;
+
+    @Column(length = 10, nullable = false)
+    private String gender;
+
+    @Column(length = 20, nullable = false)
+    private String dob;
+
+    @Column(length = 50, nullable = false, unique = true)
+    private String email;
+
+    @Column(length = 50, nullable = false, unique = true)
+    private String username;
+
+    @Column(length = 50, nullable = false)
+    private String password;
+
+    @Column(length = 20, nullable = false, unique = true)
+    private String mobileno;
+
+    @Column(length = 50, nullable = false)
+    private String specialization;   // e.g., Cardiology, Dermatology
+
+    @Column(length = 50, nullable = false)
+    private String qualification;    // e.g., MBBS, MD, FMAS
+
+    @Column(nullable = false)
+    private int experience;          // years of experience
+
+    @Column(length = 100, nullable = false)
+    private String location;         // e.g., Hospital/Clinic name or City
+
+    // ---------------- Getters & Setters ----------------
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getDob() { return dob; }
+    public void setDob(String dob) { this.dob = dob; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getMobileno() { return mobileno; }
+    public void setMobileno(String mobileno) { this.mobileno = mobileno; }
+
+    public String getSpecialization() { return specialization; }
+    public void setSpecialization(String specialization) { this.specialization = specialization; }
+
+    public String getQualification() { return qualification; }
+    public void setQualification(String qualification) { this.qualification = qualification; }
+
+    public int getExperience() { return experience; }
+    public void setExperience(int experience) { this.experience = experience; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+}
+package com.klef.sdp.backend.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.klef.sdp.backend.model.Doctor;
+
+@Repository
+public interface DoctorRepository extends JpaRepository<Doctor, Integer>
+{
+    public Doctor findByUsernameAndPassword(String username, String password);
+
+    // ✅ check if username already exists
+    public boolean existsByUsername(String username);
+}
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Doctor;
+import java.util.List;
+
+public interface DoctorService 
+{
+    public String doctorRegistration(Doctor doctor);
+    public Doctor checkDoctorLogin(String username, String password);
+    public Doctor getDoctorById(int id);
+    public String updateDoctorProfile(Doctor doctor);
+
+    public List<Doctor> getAllDoctors(); 
+}
+package com.klef.sdp.backend.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.klef.sdp.backend.model.Doctor;
+import com.klef.sdp.backend.repository.DoctorRepository;
+
+import java.util.List;
+
+@Service
+public class DoctorServiceImpl implements DoctorService
+{
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Override
+    public String doctorRegistration(Doctor doctor) {
+        // ✅ check if username already exists
+        if (doctorRepository.existsByUsername(doctor.getUsername())) {
+            return "Username already exists! Please choose another one.";
+        }
+
+        doctorRepository.save(doctor);
+        return "Doctor Registered Successfully";
+    }
+
+    @Override
+    public Doctor checkDoctorLogin(String username, String password) {
+        return doctorRepository.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public Doctor getDoctorById(int id) {
+        return doctorRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public String updateDoctorProfile(Doctor doctor) {
+        Doctor existing = doctorRepository.findById(doctor.getId()).orElse(null);
+        if (existing != null) {
+            existing.setName(doctor.getName());
+            existing.setDob(doctor.getDob());
+            existing.setGender(doctor.getGender());
+            existing.setEmail(doctor.getEmail());
+            existing.setMobileno(doctor.getMobileno());
+            existing.setSpecialization(doctor.getSpecialization());
+            existing.setQualification(doctor.getQualification());
+            existing.setExperience(doctor.getExperience());
+            existing.setLocation(doctor.getLocation());
+            existing.setPassword(doctor.getPassword());
+
+            doctorRepository.save(existing);
+            return "Doctor Profile Updated Successfully";
+        } else {
+            return "Doctor Not Found";
+        }
+    }
+
+    @Override
+    public List<Doctor> getAllDoctors() {
+        return doctorRepository.findAll();
+    }
+}
+__________________
+appointment
+package com.klef.sdp.backend.controller;
+
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.service.AppointmentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/appointments")
+@CrossOrigin("*")   // ✅ allows all origins
+public class AppointmentController {
+
+    @Autowired
+    private AppointmentService appointmentService;
+
+    @PostMapping("/book")
+    public Appointment bookAppointment(@RequestBody Appointment appointment) {
+        return appointmentService.bookAppointment(appointment);
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public List<Appointment> getAppointmentsByDoctor(@PathVariable int doctorId) {
+        return appointmentService.getAppointmentsByDoctor(doctorId);
+    }
+
+    @GetMapping("/patient/{patientId}")
+    public List<Appointment> getAppointmentsByPatient(@PathVariable int patientId) {
+        return appointmentService.getAppointmentsByPatient(patientId);
+    }
+}
+package com.klef.sdp.backend.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="appointment_table")
+public class Appointment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(nullable = false)
+    private int patientId;
+
+    @Column(nullable = false)
+    private int doctorId;
+
+    @Column(nullable = false)
+    private String date;
+
+    @Column(nullable = false)
+    private String timeSlot;
+
+    @Column(nullable = false, length = 200)
+    private String reason;
+
+    @Column(length = 20)
+    private String status = "PENDING";
+
+    @Column(length = 200)
+    private String doctorFeedback;
+
+    // Auto-fetched, not required from frontend
+    @Column(nullable = false, length = 50)
+    private String patientName;
+
+    @Column(nullable = false, length = 20)
+    private String patientContact;
+
+    // getters & setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public int getPatientId() { return patientId; }
+    public void setPatientId(int patientId) { this.patientId = patientId; }
+
+    public int getDoctorId() { return doctorId; }
+    public void setDoctorId(int doctorId) { this.doctorId = doctorId; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+
+    public String getTimeSlot() { return timeSlot; }
+    public void setTimeSlot(String timeSlot) { this.timeSlot = timeSlot; }
+
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getDoctorFeedback() { return doctorFeedback; }
+    public void setDoctorFeedback(String doctorFeedback) { this.doctorFeedback = doctorFeedback; }
+
+    public String getPatientName() { return patientName; }
+    public void setPatientName(String patientName) { this.patientName = patientName; }
+
+    public String getPatientContact() { return patientContact; }
+    public void setPatientContact(String patientContact) { this.patientContact = patientContact; }
+}
+package com.klef.sdp.backend.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.klef.sdp.backend.model.Appointment;
+
+@Repository
+public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
+}
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Appointment;
+import java.util.List;
+
+public interface AppointmentService {
+    Appointment bookAppointment(Appointment appointment);
+    List<Appointment> getAppointmentsByDoctor(int doctorId);
+    List<Appointment> getAppointmentsByPatient(int patientId);
+}
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.model.Patient;
+import com.klef.sdp.backend.repository.AppointmentRepository;
+import com.klef.sdp.backend.repository.PatientRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AppointmentServiceImpl implements AppointmentService {
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Override
+    public Appointment bookAppointment(Appointment appointment) {
+        // Fetch patient details automatically
+        Patient patient = patientRepository.findById(appointment.getPatientId()).orElse(null);
+        if (patient == null) {
+            throw new RuntimeException("Invalid patientId");
+        }
+
+        appointment.setPatientName(patient.getName());
+        // ✅ FIX: use mobileno, not contact
+        appointment.setPatientContact(patient.getMobileno());  
+
+        return appointmentRepository.save(appointment);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByDoctor(int doctorId) {
+        return appointmentRepository.findAll()
+                .stream().filter(a -> a.getDoctorId() == doctorId).toList();
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByPatient(int patientId) {
+        return appointmentRepository.findAll()
+                .stream().filter(a -> a.getPatientId() == patientId).toList();
+    }
+}
+_________________________________
+frontendcodes:
+import { useState, useEffect } from "react";
+import axios from "axios";
+import config from "../config";
+import "./patientcss/appointmentBooking.css";
+
+export default function AppointmentBooking() {
+  const [formData, setFormData] = useState({
+    patientId: "",   // only this is needed
+    doctorId: "",
+    date: "",
+    timeSlot: "",
+    reason: ""
+  });
+
+  const [doctors, setDoctors] = useState([]);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const patient = JSON.parse(localStorage.getItem("patient")); // from login
+    if (patient) {
+      setFormData((prev) => ({ ...prev, patientId: patient.id }));
+    }
+
+    const fetchDoctors = async () => {
+      try {
+        const res = await axios.get(`${config.url}/doctor/all`);
+        setDoctors(res.data);
+      } catch {
+        setDoctors([]);
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  const generateTimeSlots = () => {
+    let slots = [];
+    for (let h = 9; h <= 22; h++) {
+      if (h >= 14 && h < 16) continue;
+      for (let m of [0, 15, 30, 45]) {
+        if (h === 22 && m > 0) continue;
+        const time = new Date();
+        time.setHours(h, m);
+        slots.push(time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+      }
+    }
+    return slots;
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${config.url}/appointments/book`, formData);
+      setMessage("✅ Appointment booked successfully!");
+    } catch (err) {
+      setMessage("❌ Failed to book appointment. Try again.");
+    }
+  };
+
+  return (
+    <div className="appointment-container">
+      <h2>📅 Book Appointment</h2>
+      {message && <p>{message}</p>}
+
+      <form onSubmit={handleSubmit}>
+        <label>Doctor</label>
+        <select id="doctorId" value={formData.doctorId} onChange={handleChange} required>
+          <option value="">-- Choose Doctor --</option>
+          {doctors.map((doc) => (
+            <option key={doc.id} value={doc.id}>
+              {doc.name} ({doc.specialization})
+            </option>
+          ))}
+        </select>
+
+        <label>Date</label>
+        <input type="date" id="date" value={formData.date} onChange={handleChange} required />
+
+        <label>Time</label>
+        <select id="timeSlot" value={formData.timeSlot} onChange={handleChange} required>
+          <option value="">-- Select Time --</option>
+          {generateTimeSlots().map((slot, i) => (
+            <option key={i} value={slot}>{slot}</option>
+          ))}
+        </select>
+
+        <label>Reason</label>
+        <textarea id="reason" value={formData.reason} onChange={handleChange} required />
+
+        <button type="submit">Book</button>
+      </form>
+    </div>
+  );
+}
+___
+import { useState, useEffect } from "react";
+import axios from "axios";
+import config from "../config";
+import "./doctorcss/ViewAppointment.css";
+
+export default function ViewAppointment() {
+  const [appointments, setAppointments] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const storedDoctor = JSON.parse(sessionStorage.getItem("doctor"));
+        if (!storedDoctor) {
+          setError("Doctor not logged in");
+          return;
+        }
+        const response = await axios.get(`${config.url}/appointments/doctor/${storedDoctor.id}`);
+        setAppointments(response.data);
+      } catch {
+        setError("Failed to fetch appointments. Please try again later.");
+      }
+    };
+    fetchAppointments();
+  }, []);
+
+  const updateStatus = async (id, status) => {
+    const feedback = prompt("Optional feedback (for reschedule/deny):") || "";
+    try {
+      await axios.put(`${config.url}/appointments/${id}/status?status=${status}&feedback=${feedback}`);
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, status, doctorFeedback: feedback } : a))
+      );
+    } catch {
+      alert("Failed to update status");
+    }
+  };
+
+  return (
+    <div className="appointments-container">
+      <h2 className="appointments-heading">📅 My Appointments</h2>
+      {error && <p className="appointments-error">{error}</p>}
+
+      {appointments.length === 0 ? (
+        <p className="appointments-empty">No appointments found.</p>
+      ) : (
+        <div className="appointments-table-container">
+          <table className="appointments-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Reason</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Feedback</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {appointments.map((appt) => (
+                <tr key={appt.id}>
+                  <td>{appt.patientName}</td>
+                  <td>{appt.date}</td>
+                  <td>{appt.timeSlot}</td>
+                  <td>{appt.reason}</td>
+                  <td>{appt.patientContact}</td>
+                  <td>{appt.status}</td>
+                  <td>{appt.doctorFeedback || "-"}</td>
+                  <td>
+                    <button onClick={() => updateStatus(appt.id, "APPROVED")}>Approve</button>
+                    <button onClick={() => updateStatus(appt.id, "DENIED")}>Deny</button>
+                    <button onClick={() => updateStatus(appt.id, "RESCHEDULED")}>Reschedule</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+______
+import { useState, useEffect } from "react";
+import axios from "axios";
+import config from "../config";
+import "./patientcss/MyAppointment.css";
+
+export default function MyAppointment() {
+  const [appointments, setAppointments] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const patientId = sessionStorage.getItem("patientId");
+        if (!patientId) {
+          setError("Patient not logged in");
+          return;
+        }
+        const response = await axios.get(`${config.url}/appointments/patient/${patientId}`);
+        setAppointments(response.data);
+      } catch {
+        setError("Failed to fetch appointments. Please try again later.");
+      }
+    };
+    fetchAppointments();
+  }, []);
+
+  return (
+    <div className="appointments-container">
+      <h2 className="appointments-heading">📋 My Appointments</h2>
+      {error && <p className="appointments-error">{error}</p>}
+
+      {appointments.length === 0 ? (
+        <p className="appointments-empty">No appointments found.</p>
+      ) : (
+        <div className="appointments-table-container">
+          <table className="appointments-table">
+            <thead>
+              <tr>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              {appointments.map((appt, index) => (
+                <tr key={index}>
+                  <td>{appt.doctorName}</td>
+                  <td>{appt.appointmentDate}</td>
+                  <td>{appt.appointmentTime}</td>
+                  <td>{appt.reason}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

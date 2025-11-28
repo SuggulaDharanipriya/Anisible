@@ -1,0 +1,14 @@
+package com.klef.sdp.backend.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.klef.sdp.backend.model.Doctor;
+
+@Repository
+public interface DoctorRepository extends JpaRepository<Doctor, Integer>
+{
+    public Doctor findByUsernameAndPassword(String username, String password);
+
+    // ✅ check if username already exists
+    public boolean existsByUsername(String username);
+}

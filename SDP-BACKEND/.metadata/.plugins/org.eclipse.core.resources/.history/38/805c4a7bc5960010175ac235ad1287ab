@@ -1,0 +1,47 @@
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.model.Patient;
+import com.klef.sdp.backend.repository.AppointmentRepository;
+import com.klef.sdp.backend.repository.PatientRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AppointmentServiceImpl implements AppointmentService {
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Override
+    public Appointment bookAppointment(Appointment appointment) {
+        // Fetch patient details automatically
+        Patient patient = patientRepository.findById(appointment.getPatientId()).orElse(null);
+        if (patient == null) {
+            throw new RuntimeException("Invalid patientId");
+        }
+
+        appointment.setPatientName(patient.getName());
+        appointment.setPatientContact(patient.getMobile());
+
+        return appointmentRepository.save(appointment);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByDoctor(int doctorId) {
+        return appointmentRepository.findAll()
+                .stream().filter(a -> a.getDoctorId() == doctorId).toList();
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByPatient(int patientId) {
+        return appointmentRepository.findAll()
+                .stream().filter(a -> a.getPatientId() == patientId).toList();
+    }
+}

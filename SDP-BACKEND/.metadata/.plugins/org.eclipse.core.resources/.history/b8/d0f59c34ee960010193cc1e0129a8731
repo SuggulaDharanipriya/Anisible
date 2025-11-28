@@ -1,0 +1,71 @@
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.dto.AppointmentDTO;
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.model.Doctor;
+import com.klef.sdp.backend.model.Patient;
+import com.klef.sdp.backend.repository.AppointmentRepository;
+import com.klef.sdp.backend.repository.DoctorRepository;
+import com.klef.sdp.backend.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AppointmentServiceImpl implements AppointmentService {
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Override
+    public Appointment bookAppointment(AppointmentDTO dto) {
+        Patient patient = patientRepository.findById(dto.getPatientId())
+                .orElseThrow(() -> new RuntimeException("Invalid patientId"));
+
+        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
+                .orElseThrow(() -> new RuntimeException("Invalid doctorId"));
+
+        Appointment appointment = new Appointment();
+        appointment.setPatientId(patient.getPatientId());
+        appointment.setPatientName(patient.getPatientName());
+        appointment.setPatientContact(patient.getPatientMobileno());
+
+        appointment.setDoctorId(doctor.getDoctorId());
+        appointment.setDoctorName(doctor.getName());
+
+        appointment.setDate(dto.getDate());
+        appointment.setTimeRange(dto.getTimeRange());
+        appointment.setReason(dto.getReason());
+        appointment.setStatus("Pending");
+
+        return appointmentRepository.save(appointment);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByDoctor(int doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByPatient(int patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
+
+    public Appointment updateStatus(int id, String status, String feedback, String confirmedTime) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        appointment.setStatus(status);
+        appointment.setDoctorFeedback(feedback);
+        appointment.setConfirmedTime(confirmedTime);
+
+        return appointmentRepository.save(appointment);
+    }
+}

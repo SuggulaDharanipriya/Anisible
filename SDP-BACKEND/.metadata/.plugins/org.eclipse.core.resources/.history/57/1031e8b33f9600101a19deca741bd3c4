@@ -1,0 +1,5 @@
+package com.klef.sdp.backend.model;
+
+public class Doctor {
+
+}

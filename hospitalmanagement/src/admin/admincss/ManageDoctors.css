@@ -1,0 +1,174 @@
+.doctor-container {
+  padding: 2rem;
+  background: #f4f8fc;
+  min-height: 100vh;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title */
+.doctor-title {
+  text-align: center;
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  position: relative;
+  color: #2c3e50;
+}
+
+.doctor-title::after {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 4px;
+  margin: 0.6rem auto 0;
+  background: linear-gradient(90deg, #2980b9, #16a085);
+  border-radius: 3px;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.filters input,
+.filters select {
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #dfe6ed;
+  font-size: 0.95rem;
+  outline: none;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 240px;
+  color: #34495e;
+}
+
+.filters input::placeholder {
+  color: #95a5a6;
+  font-style: italic;
+}
+
+.filters input:focus,
+.filters select:focus {
+  border-color: #2980b9;
+  box-shadow: 0 0 10px rgba(41, 128, 185, 0.25);
+}
+
+/* Table */
+.doctor-table {
+  width: 100%;
+  max-width: 1100px; /* slightly reduced */
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  font-size: 0.9rem; /* smaller text */
+}
+
+.doctor-table th,
+.doctor-table td {
+  padding: 10px 12px; /* reduced */
+  text-align: center;
+}
+
+.doctor-table th {
+  background: linear-gradient(135deg, #2980b9, #27ae60);
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem; /* smaller headers */
+  letter-spacing: 0.5px;
+}
+
+.doctor-table tbody tr:nth-child(even) {
+  background: #f9fcff;
+}
+
+.doctor-table tbody tr:hover {
+  background: #eaf6ff;
+}
+
+/* Buttons smaller */
+.delete-btn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+
+/* Buttons */
+.delete-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #c0392b, #96281b);
+  transform: translateY(-2px);
+}
+
+/* Status Messages */
+.table-error,
+.table-loading,
+.table-empty {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 1.2rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.table-error {
+  color: #fff;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.table-loading {
+  color: #fff;
+  background: linear-gradient(135deg, #2980b9, #16a085);
+}
+
+.table-empty {
+  color: #7f8c8d;
+  background: #ecf0f1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .doctor-table th,
+  .doctor-table td {
+    padding: 10px 8px;
+    font-size: 0.82rem;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters input,
+  .filters select {
+    min-width: 100%;
+  }
+}

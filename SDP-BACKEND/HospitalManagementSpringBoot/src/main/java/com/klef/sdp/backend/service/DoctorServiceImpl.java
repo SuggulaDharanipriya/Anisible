@@ -1,0 +1,64 @@
+package com.klef.sdp.backend.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.klef.sdp.backend.model.Doctor;
+import com.klef.sdp.backend.repository.DoctorRepository;
+
+import java.util.List;
+
+@Service
+public class DoctorServiceImpl implements DoctorService
+{
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Override
+    public String doctorRegistration(Doctor doctor) {
+        // ✅ check if username already exists
+        if (doctorRepository.existsByUsername(doctor.getUsername())) {
+            return "Username already exists! Please choose another one.";
+        }
+
+        doctorRepository.save(doctor);
+        return "Doctor Registered Successfully";
+    }
+
+    @Override
+    public Doctor checkDoctorLogin(String username, String password) {
+        return doctorRepository.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public Doctor getDoctorById(int id) {
+        return doctorRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public String updateDoctorProfile(Doctor doctor) {
+        Doctor existing = doctorRepository.findById(doctor.getId()).orElse(null);
+        if (existing != null) {
+            existing.setName(doctor.getName());
+            existing.setDob(doctor.getDob());
+            existing.setGender(doctor.getGender());
+            existing.setEmail(doctor.getEmail());
+            existing.setMobileno(doctor.getMobileno());
+            existing.setSpecialization(doctor.getSpecialization());
+            existing.setQualification(doctor.getQualification());
+            existing.setExperience(doctor.getExperience());
+            existing.setLocation(doctor.getLocation());
+            existing.setPassword(doctor.getPassword());
+
+            doctorRepository.save(existing);
+            return "Doctor Profile Updated Successfully";
+        } else {
+            return "Doctor Not Found";
+        }
+    }
+
+    @Override
+    public List<Doctor> getAllDoctors() {
+        return doctorRepository.findAll();
+    }
+}

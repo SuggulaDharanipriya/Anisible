@@ -1,0 +1,7 @@
+import com.klef.sdp.backend.dto.AppointmentDTO;
+
+public interface AppointmentService {
+    Appointment bookAppointment(AppointmentDTO dto);
+    List<Appointment> getAppointmentsByDoctor(int doctorId);
+    List<Appointment> getAppointmentsByPatient(int patientId);
+}

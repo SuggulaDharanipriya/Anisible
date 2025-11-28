@@ -1,0 +1,33 @@
+package com.klef.sdp.backend.controller;
+
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.service.AppointmentService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/appointments")
+@CrossOrigin(origins = "http://localhost:3000") // adjust frontend URL
+public class AppointmentController {
+
+    @Autowired
+    private AppointmentService appointmentService;
+
+    @PostMapping("/book")
+    public Appointment book(@RequestBody Appointment appointment) {
+        return appointmentService.bookAppointment(appointment);
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public List<Appointment> getByDoctor(@PathVariable int doctorId) {
+        return appointmentService.getAppointmentsByDoctor(doctorId);
+    }
+
+    @GetMapping("/patient/{patientId}")
+    public List<Appointment> getByPatient(@PathVariable int patientId) {
+        return appointmentService.getAppointmentsByPatient(patientId);
+    }
+}

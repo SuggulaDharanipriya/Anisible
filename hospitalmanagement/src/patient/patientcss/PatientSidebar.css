@@ -1,0 +1,154 @@
+/* Health Records System Patient Sidebar - Professional Healthcare Design */
+
+/* Override admin.css for patient-specific styling */
+.app-container .sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 2rem 0;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+  border-right: 1px solid #e0e0e0;
+
+  /* 🔹 Fix to make sidebar constant */
+  position: fixed;
+  top: 70px; /* height of navbar */
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.app-container .sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1976d2, #42a5f5, #2e7d32, #4caf50);
+}
+
+.app-container .sidebar-heading {
+  color: #1976d2;
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 0 1.5rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.app-container .sidebar-heading::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 3px;
+  background: linear-gradient(90deg, #1976d2, #42a5f5);
+  border-radius: 2px;
+}
+
+.app-container .sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.app-container .sidebar li {
+  margin-bottom: 0.5rem;
+  padding: 0 1rem;
+}
+
+.app-container .sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 1rem;
+  border-radius: 12px;
+  position: relative;
+  font-weight: 500;
+  overflow: hidden;
+}
+
+.app-container .sidebar a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.app-container .sidebar a:hover::before {
+  left: 100%;
+}
+
+.app-container .sidebar a:hover {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  color: #1976d2;
+  transform: translateX(8px);
+  box-shadow: 0 4px 15px rgba(25, 118, 210, 0.2);
+  border-left: 4px solid #1976d2;
+}
+
+.app-container .sidebar a.active {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
+  transform: translateX(4px);
+}
+
+.app-container .sidebar a.active::before {
+  display: none;
+}
+
+.app-container .sidebar .nav-icon {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.app-container .sidebar a:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+/* Patient-specific hover effects */
+.app-container .sidebar li:nth-child(1) a:hover { background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); color: #2e7d32; }
+.app-container .sidebar li:nth-child(2) a:hover { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); color: #f57c00; }
+.app-container .sidebar li:nth-child(3) a:hover { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1976d2; }
+.app-container .sidebar li:nth-child(4) a:hover { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); color: #7b1fa2; }
+.app-container .sidebar li:nth-child(5) a:hover { background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%); color: #00695c; }
+.app-container .sidebar li:nth-child(6) a:hover { background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); color: #c2185b; }
+.app-container .sidebar li:nth-child(7) a:hover { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); color: #f9a825; }
+.app-container .sidebar li:nth-child(8) a:hover { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); color: #d32f2f; }
+
+/* Content area adjustment */
+.content {
+  margin-left: 280px; /* leave space for sidebar */
+  margin-top: 70px;   /* leave space for navbar */
+  padding: 20px;
+  min-height: calc(100vh - 70px);
+  background: #f7fafc;
+  overflow-y: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-container .sidebar {
+    width: 100%;
+    position: relative;
+    top: 0;
+    height: auto;
+  }
+  
+  .content {
+    margin-left: 0;
+    margin-top: 70px;
+  }
+}

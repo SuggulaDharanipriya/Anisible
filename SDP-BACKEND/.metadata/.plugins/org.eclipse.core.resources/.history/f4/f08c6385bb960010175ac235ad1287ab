@@ -1,0 +1,61 @@
+package com.klef.sdp.backend.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.klef.sdp.backend.model.Doctor;
+import com.klef.sdp.backend.service.DoctorService;
+
+@RestController
+@RequestMapping("/doctor")
+@CrossOrigin("*")
+public class DoctorController 
+{
+    @Autowired
+    private DoctorService doctorService;
+
+    @PostMapping("/registration")
+    public ResponseEntity<String> doctorRegistration(@RequestBody Doctor doctor) {
+        try {
+            String result = doctorService.doctorRegistration(doctor);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Doctor Registration Failed");
+        }
+    }
+
+    @PostMapping("/checkdoctorlogin")
+    public ResponseEntity<?> checkDoctorLogin(@RequestBody Doctor doctor) {
+        try {
+            Doctor d = doctorService.checkDoctorLogin(doctor.getUsername(), doctor.getPassword());
+            if (d != null) {
+                return ResponseEntity.ok(d);
+            } else {
+                return ResponseEntity.status(401).body("Invalid Username or Password");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Login Failed");
+        }
+    }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<?> getDoctorProfile(@PathVariable int id) {
+        Doctor d = doctorService.getDoctorById(id);
+        if (d != null) {
+            return ResponseEntity.ok(d);
+        } else {
+            return ResponseEntity.status(404).body("Doctor Not Found");
+        }
+    }
+
+    @PutMapping("/updateprofile")
+    public ResponseEntity<String> updateDoctorProfile(@RequestBody Doctor doctor) {
+        try {
+            String result = doctorService.updateDoctorProfile(doctor);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to Update Doctor Profile");
+        }
+    }
+}

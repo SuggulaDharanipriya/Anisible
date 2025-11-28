@@ -1,0 +1,65 @@
+package com.klef.sdp.backend.controller;
+
+import com.klef.sdp.backend.model.Admin;
+import com.klef.sdp.backend.model.Patient;
+import com.klef.sdp.backend.model.Doctor;
+import com.klef.sdp.backend.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/admin")
+@CrossOrigin("*")
+public class AdminController {
+
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> checkAdminLogin(@RequestBody Admin admin) {
+        Admin a = adminService.checkAdminLogin(admin.getUsername(), admin.getPassword());
+        if (a != null) {
+            return ResponseEntity.ok(a);
+        } else {
+            return ResponseEntity.status(401).body("Invalid Username or Password");
+        }
+    }
+
+    @GetMapping("/patients")
+    public ResponseEntity<List<Patient>> viewAllPatients() {
+        return ResponseEntity.ok(adminService.displayPatients());
+    }
+
+    @GetMapping("/doctors")
+    public ResponseEntity<List<Doctor>> viewAllDoctors() {
+        return ResponseEntity.ok(adminService.displayDoctors());
+    }
+
+    @PostMapping("/adddoctor")
+    public ResponseEntity<String> addDoctor(@RequestBody Doctor doctor) {
+        return ResponseEntity.ok(adminService.addDoctor(doctor));
+    }
+
+    @DeleteMapping("/deletepatient")
+    public ResponseEntity<String> deletePatient(@RequestParam int id) {
+        return ResponseEntity.ok(adminService.deletePatient(id));
+    }
+
+    @DeleteMapping("/deletedoctor")
+    public ResponseEntity<String> deleteDoctor(@RequestParam int id) {
+        return ResponseEntity.ok(adminService.deleteDoctor(id));
+    }
+
+    @GetMapping("/count/patients")
+    public ResponseEntity<Long> getPatientCount() {
+        return ResponseEntity.ok(adminService.displayPatientCount());
+    }
+
+    @GetMapping("/count/doctors")
+    public ResponseEntity<Long> getDoctorCount() {
+        return ResponseEntity.ok(adminService.displayDoctorCount());
+    }
+}

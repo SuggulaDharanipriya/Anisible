@@ -1,0 +1,36 @@
+import com.klef.sdp.backend.dto.AppointmentDTO;
+
+@Service
+public class AppointmentServiceImpl implements AppointmentService {
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Override
+    public Appointment bookAppointment(AppointmentDTO dto) {
+        Appointment appt = new Appointment();
+        appt.setDoctor(doctorRepository.findById(dto.getDoctorId()).orElseThrow());
+        appt.setPatient(patientRepository.findById(dto.getPatientId()).orElseThrow());
+        appt.setDate(dto.getDate());
+        appt.setTimeRange(dto.getTimeRange());
+        appt.setReason(dto.getReason());
+        appt.setStatus("PENDING");
+        return appointmentRepository.save(appt);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByDoctor(int doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByPatient(int patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
+}

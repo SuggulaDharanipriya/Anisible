@@ -1,0 +1,12 @@
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.dto.AppointmentDTO;
+import com.klef.sdp.backend.model.Appointment;
+import java.util.List;
+
+public interface AppointmentService {
+    Appointment bookAppointment(AppointmentDTO dto);
+    List<Appointment> getAppointmentsByDoctor(int doctorId);
+    List<Appointment> getAppointmentsByPatient(int patientId);
+    Appointment updateStatus(int id, String status, String feedback, String confirmedTime);
+}

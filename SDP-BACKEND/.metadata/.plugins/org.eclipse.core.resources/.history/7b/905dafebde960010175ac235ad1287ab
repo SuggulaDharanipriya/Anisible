@@ -1,0 +1,82 @@
+package com.klef.sdp.backend.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "appointment_table")
+public class Appointment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "appointment_id")
+    private int id;
+
+    @Column(nullable = false)
+    private int patientId;
+
+    @Column(nullable = false)
+    private int doctorId;
+
+    @Column(nullable = false, length = 50)
+    private String patientName;
+
+    @Column(nullable = false, length = 20)
+    private String patientContact;
+
+    @Column(nullable = false, length = 50)
+    private String doctorName;   // NEW field
+
+    @Column(nullable = false, length = 20)
+    private String date;
+
+    @Column(nullable = false, length = 20)
+    private String timeRange;   // NEW: patient’s chosen range
+
+    @Column(length = 20)
+    private String confirmedTime;   // NEW: doctor assigns exact slot
+
+    @Column(nullable = false, length = 200)
+    private String reason;
+
+    @Column(nullable = false, length = 20)
+    private String status; // PENDING, APPROVED, RESCHEDULED, DENIED
+
+    @Column(length = 200)
+    private String doctorFeedback;
+
+    // 🔹 Getters & Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public int getPatientId() { return patientId; }
+    public void setPatientId(int patientId) { this.patientId = patientId; }
+
+    public int getDoctorId() { return doctorId; }
+    public void setDoctorId(int doctorId) { this.doctorId = doctorId; }
+
+    public String getPatientName() { return patientName; }
+    public void setPatientName(String patientName) { this.patientName = patientName; }
+
+    public String getPatientContact() { return patientContact; }
+    public void setPatientContact(String patientContact) { this.patientContact = patientContact; }
+
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+
+    public String getTimeRange() { return timeRange; }
+    public void setTimeRange(String timeRange) { this.timeRange = timeRange; }
+
+    public String getConfirmedTime() { return confirmedTime; }
+    public void setConfirmedTime(String confirmedTime) { this.confirmedTime = confirmedTime; }
+
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getDoctorFeedback() { return doctorFeedback; }
+    public void setDoctorFeedback(String doctorFeedback) { this.doctorFeedback = doctorFeedback; }
+}

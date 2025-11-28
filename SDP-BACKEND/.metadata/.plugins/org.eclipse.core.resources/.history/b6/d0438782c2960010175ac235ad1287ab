@@ -1,0 +1,40 @@
+package com.klef.sdp.backend.service;
+
+import com.klef.sdp.backend.model.Appointment;
+import com.klef.sdp.backend.repository.AppointmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class AppointmentServiceImpl implements AppointmentService {
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Override
+    public Appointment bookAppointment(Appointment appointment) {
+        return appointmentRepository.save(appointment);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByDoctor(int doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByPatient(int patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
+
+    @Override
+    public Appointment updateAppointmentStatus(int id, String status, String feedback) {
+        Appointment appt = appointmentRepository.findById(id).orElse(null);
+        if (appt != null) {
+            appt.setStatus(status);
+            appt.setDoctorFeedback(feedback);
+            return appointmentRepository.save(appt);
+        }
+        return null;
+    }
+}
